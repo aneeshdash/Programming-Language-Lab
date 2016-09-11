@@ -26,6 +26,9 @@ public class Calculator {
     static JButton bmul;
     static JButton bsub;
     static JButton badd;
+    static JLabel ins1;
+    static JLabel ins2;
+    static JLabel ins3;
 
 
     public Calculator() {
@@ -52,6 +55,9 @@ public class Calculator {
         bmul=new JButton("*");
         bsub=new JButton("-");
         badd=new JButton("+");
+        ins1 = new JLabel("To start/stop: Press 'S'");
+        ins2 = new JLabel("To select: Press 'Enter'");
+        ins3 = new JLabel("To select op: Press 'Space'");
 
 
         //setting display bounds
@@ -73,6 +79,9 @@ public class Calculator {
         bsub.setBounds(90,220,50,40);
         bmul.setBounds(140,220,50,40);
         bdiv.setBounds(190,220,50,40);
+        ins1.setBounds(30, 270, 200, 30);
+        ins2.setBounds(30, 290, 200, 30);
+        ins3.setBounds(30, 310, 250, 30);
 
         //making buttons unfocusable so that all keystrokes goes to frame
         b0.setFocusable(false);
@@ -89,6 +98,9 @@ public class Calculator {
         bsub.setFocusable(false);
         bmul.setFocusable(false);
         bdiv.setFocusable(false);
+        ins1.setFocusable(false);
+        ins2.setFocusable(false);
+        ins3.setFocusable(false);
 
 
         //adding buttons and display
@@ -107,10 +119,12 @@ public class Calculator {
         frame.add(bsub);
         frame.add(b0);
         frame.add(badd);
-
+        frame.add(ins1);
+        frame.add(ins2);
+        frame.add(ins3);
 
         frame.setLayout(null);
-        frame.setSize(280,300); //setting the frame size
+        frame.setSize(280,380); //setting the frame size
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); //activating the close button
         frame.setResizable(false); //standard size of calculator
         frame.setVisible(true); //making it visible
