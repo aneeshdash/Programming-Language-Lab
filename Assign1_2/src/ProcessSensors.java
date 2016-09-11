@@ -1,4 +1,6 @@
 import java.math.BigInteger;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import java.util.concurrent.ForkJoinPool;
 
 /**
@@ -7,26 +9,21 @@ import java.util.concurrent.ForkJoinPool;
  */
 public class ProcessSensors {
     public static void main(String args[]) throws InterruptedException {
-        Data data = new Data();                                 //class for handling data
-        //set thresholds
+        Data data = new Data();                                     //class for handling data
         long sumThresh = 10000;
         long avgThresh = 100;
         BigInteger prodThresh = new BigInteger("100000");
-        int count;      //count of sensors which returned data
-        //create sensor threads and start them
+        int count;                                                  //count of sensors which returned data
+        Executor pool = Executors.newFixedThreadPool(10);
         for (int i=0;i<10;i++)
         {
-            Thread t = new Thread(new RandomString(i, data));
-            t.start();
+            pool.execute(new RandomString(i, data));                //Create new runnables for sensors and run them in the pool
         }
         //delay for sensors to start producing output
         Thread.sleep(100);
         while(true)
         {
-            //no sensor should access data while reading
-            synchronized (data) {
-                count = data.convert();
-            }
+            count = data.convert();
             if(count == 10) {
                 ForkJoinPool.commonPool().invoke(new MergeSort(data.intData));
                 Thread add = new Thread(new AddNumbers(data));          //threads to add numbers

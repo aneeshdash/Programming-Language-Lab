@@ -15,5 +15,6 @@ public class ConvertBinToInt implements Runnable {
     public void run()
     {
         data[index] = Integer.parseInt(binStr,2);
+//        System.out.println(Integer.parseInt(binStr,2));
     }
 }

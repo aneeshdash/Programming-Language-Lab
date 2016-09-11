@@ -15,6 +15,7 @@ public class MergeSort extends RecursiveAction {
 
     public void compute()
     {
+        //base cases
         if(data.length == 1)
             return;
         if(data.length == 2) {

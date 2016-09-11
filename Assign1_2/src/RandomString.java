@@ -8,7 +8,6 @@ public class RandomString implements Runnable {
     private String name;
     private Data data;
     private int index;
-
     public RandomString(int index, Data data) {
         this.name = Integer.toString(index + 1);
         this.data = data;
@@ -23,10 +22,7 @@ public class RandomString implements Runnable {
             for (int i = 0; i < 8; i++) {
                 binNumber.append(b.nextInt(2));     //append bits to string
             }
-            //add value atomically
-            synchronized (data) {
-                data.setValue(binNumber.toString(), index);
-            }
+            data.setValue(binNumber.toString(), index);     //synchronized not required as locks are used
             //sleep for some time after producing a number
             try {
                 Thread.sleep(900);

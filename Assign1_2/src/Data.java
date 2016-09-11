@@ -1,5 +1,12 @@
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Created by dash on 15/8/16.
@@ -11,6 +18,7 @@ public class Data {
     public LinkedList<String>[] data = new LinkedList[10];      //queue for storing sensor outputs
     private long sum, avg;      //outputs of post-processing
     private BigInteger prod;
+    ReentrantLock lock = new ReentrantLock();           //lock for locking class
 
     public Data()
     {
@@ -19,30 +27,40 @@ public class Data {
             data[i] = new LinkedList<String >();
     }
 
-    //add value to queue
+    //add value to queue and lock before adding
     public void setValue(String val, int idx) {
-        binData[idx] = val;
-        data[idx].add(val);
+        lock.lock();
+        try {
+            binData[idx] = val;
+            data[idx].add(val);
+        }
+        finally {
+            lock.unlock();
+        }
     }
 
     //convert string to integers and count number of sensors which produced data
+    //lock is acquired so other sensors cannot add values.
     public int convert() throws InterruptedException {
+        ExecutorService pool = Executors.newFixedThreadPool(10);
         Thread t[] = new Thread[10];
         int count=0;
         String val;
-        for (int i=0;i<10;i++)
-        {
-            val = data[i].poll();
-            if(val != null) {
-                t[i] = new Thread(new ConvertBinToInt(val, intData, i));
-                t[i].start();
-                count++;
+        lock.lock();
+        try {
+            for (int i = 0; i < 10; i++) {
+                val = data[i].poll();
+                if (val != null) {
+                    pool.execute(new ConvertBinToInt(val, intData, i));
+                    count++;
+                } else
+                    t[i] = null;
             }
-            else
-                t[i] = null;
+            pool.shutdown();
         }
-        for (int i=0;i<10;i++)
-            t[i].join();
+        finally {
+            lock.unlock();
+        }
         return count;
     }
 
@@ -75,7 +93,7 @@ public class Data {
             System.out.println("State detected from multiplication");
     }
 
-    //print calculated values to console
+    //print values to console
     public void printVal()
     {
         for (int i=0;i<intData.length;i++)

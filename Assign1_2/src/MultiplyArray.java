@@ -2,7 +2,7 @@ import java.math.BigInteger;
 
 /**
  * Created by dash on 15/8/16.
- * Class to multiply an array of integers
+ * Multiply elements of an integer array
  */
 public class MultiplyArray implements Runnable {
     private Data data;
