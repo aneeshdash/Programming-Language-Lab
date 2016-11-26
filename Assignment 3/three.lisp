@@ -1,19 +1,20 @@
 (defun bellman (v e graph1 graph2 graph3 src dest)
 
   (setq distances (make-array v :initial-element 9999))
+  (setq parent (make-array v :initial-element -1))
 
   (setf (aref distances src) 0)
 
   (dotimes (i (- v 1))
     (dotimes (j e)
       (IF (> (aref distances (aref graph2 j)) (+ (aref distances (aref graph1 j)) (aref graph3 j)))
-       (
-          setf (aref distances ( aref graph2 j)) (+ (aref distances (aref graph1 j)) (aref graph3 j))
+       (progn
+          (setf (aref distances ( aref graph2 j)) (+ (aref distances (aref graph1 j)) (aref graph3 j)))
+          (setf (aref parent (aref graph2 j)) (aref graph1 j))
        )
       )
     )
   )
-
   (setq result (aref distances dest)) 
 )
 
@@ -233,5 +234,26 @@
       	  (vector-push '12 to)
       	  (vector-push '2 weight)
 	      (close in)
-	      (bellman 17 27 from to weight 1 0)
 	   )))
+
+(DEFUN getPath (filename src dest)
+	(generateGraph filename)
+	(setq dist (bellman 17 27 from to weight src dest))
+	(when (= dist 9999)
+    	(format t "Destination is not reachable.")
+    	(return-from getPath ))
+	(setq path NIL)
+	(setq n dest)
+	(do ((x 0 (+ 1 x)))
+	   ((= src n) path)
+	   (setq n (aref parent n))
+	   (setq path (cons n path))
+	)
+	(format t "Path:")
+	; (reverse path)
+	(loop for x in path
+		do (prin1 (nodeMapping x))
+		   (prin1 '->))
+	(prin1 (nodeMapping dest))
+	dist
+	)
